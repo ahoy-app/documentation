@@ -13,10 +13,7 @@ c --> gw : GET /*
 c <-- gw : 302 /login
 
 c --> gw : GET /login
-c <-- gw : 302 {oauth.server}/auth
-
-c --> os : GET /auth
-c <-- os : 200 Auth UI
+c <-- gw : 200 Login Page
 
 c --> c : Ask and get credentials
 
