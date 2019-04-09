@@ -70,4 +70,32 @@ This special room will be used for broadcasting and other future use cases
 
 ## User
 
+It contains all the relevant information about a system's registered user
+
+```js
+{
+  id: uuid,
+  name: 'na_me',
+  role: 'user' || 'admin',
+  crypto: {
+    public: 'public_key',
+    private: passkey('my_key', 'private_key'),
+  }
+}
+```
+
+- `pk` is stored when
+
 ## Message
+
+It represents the message
+
+```js
+{
+  id: uuid,
+  from: User["id"],
+  to: Room["id"],
+  type: 'text' || 'image' || 'video',
+  content: 'text',
+}
+```
