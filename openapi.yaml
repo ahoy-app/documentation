@@ -1,0 +1,377 @@
+openapi: 3.0.1
+info:
+  title: Ahoy API
+  description: This is the Ahoy Backend basic API
+  version: 1.0.0
+servers:
+- url: https://ahoy-api.herokuapp.com/
+- url: wss://ahoy-api.herokuapp.com/
+tags:
+- name: Room
+  description: Rooms ops
+- name: User
+  description: User Ops
+- name: Messages
+  description: Message ops
+paths:
+  /rooms:
+    get:
+      tags:
+      - Room
+      operationId: getAllRooms
+      responses:
+        200:
+          description: A basic room list
+          content:
+            application/json:
+              schema:
+                title: Room List
+                type: array
+                items:
+                  title: Room Basic Item
+                  type: object
+                  additionalProperties:
+                    $ref: '#/components/schemas/RoomBasicItem'
+      security:
+      - access_token: []
+    post:
+      tags:
+      - Room
+      operationId: newGroupRoom
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
+      responses:
+        200:
+          description: A single room
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomFullItem'
+      security:
+      - access_token: []
+  /room/duo:
+    post:
+      tags:
+      - Room
+      operationId: newDuoRoom
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
+      responses:
+        200:
+          description: A single room
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomFullItem'
+      security:
+      - access_token: []
+  /room/{roomId}:
+    get:
+      tags:
+      - Room
+      operationId: getRoom
+      parameters:
+      - name: roomId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: A single room
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomFullItem'
+      security:
+      - access_token: []
+    delete:
+      tags:
+      - Room
+      operationId: deleteRoom
+      parameters:
+      - name: roomId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: 'Result '
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+      - access_token: []
+  /room/{roomId}/members:
+    put:
+      tags:
+      - Room
+      operationId: inviteUser
+      parameters:
+      - name: roomId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Result
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+      - access_token: []
+    delete:
+      tags:
+      - Room
+      operationId: kickoutUser
+      parameters:
+      - name: roomId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Result
+          content:
+            application/json:
+              schema:
+                type: string
+      security:
+      - access_token: []
+  /room/{roomId}/messages:
+    get:
+      tags:
+      - Messages
+      operationId: getMessages
+      parameters:
+      - name: roomId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Message Full List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageFullItem'
+      security:
+      - access_token: []
+    post:
+      tags:
+      - Messages
+      operationId: postMessage
+      parameters:
+      - name: roomId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
+      responses:
+        200:
+          description: Result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageBasicItem'
+      security:
+      - access_token: []
+  /room/{roomId}/file/{fileId}:
+    get:
+      tags:
+      - Messages
+      parameters:
+      - name: roomId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: fileId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Original File
+          content:
+            application/json:
+              schema:
+                type: boolean
+      security:
+      - access_token: []
+  /user:
+    get:
+      tags:
+      - User
+      responses:
+        302:
+          description: Redirect to own user
+          content: {}
+      security:
+      - access_token: []
+  /user/{userId}:
+    get:
+      tags:
+      - User
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserBasicItem'
+      security:
+      - access_token: []
+components:
+  schemas:
+    MessageFullItem:
+      title: Message Full Item
+      type: object
+      properties:
+        id:
+          type: string
+        from:
+          type: string
+        to:
+          type: string
+        content:
+          type: string
+        type:
+          type: string
+          enum:
+          - group
+          - duo
+          - system
+        timestamp:
+          type: string
+    RoomBasicItem:
+      title: Room Basic Item
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    UserBasicItem:
+      title: User Basic Item
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    RoomFullItem:
+      title: Room Full Item
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        name:
+          type: string
+        admin:
+          type: array
+          items:
+            type: string
+        members:
+          type: array
+          items:
+            type: string
+    MessageBasicItem:
+      type: object
+      properties:
+        id:
+          type: string
+        timestamp:
+          type: string
+        content:
+          type: string
+  responses:
+    User:
+      description: User
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserBasicItem'
+    MessageBasic:
+      description: Message Basic
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MessageBasicItem'
+    RoomList:
+      description: A basic room list
+      content:
+        application/json:
+          schema:
+            title: Room List
+            type: array
+            items:
+              title: Room Basic Item
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/RoomBasicItem'
+    File:
+      description: Original File
+      content:
+        application/json:
+          schema:
+            type: boolean
+    MessageFullList:
+      description: Message Full List
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/MessageFullItem'
+    Room:
+      description: A single room
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RoomFullItem'
+  parameters:
+    roomId:
+      name: roomId
+      in: path
+      description: The roomId
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    access_token:
+      type: apiKey
+      description: JWT signed by Ahoy
+      name: token
+      in: query
