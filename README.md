@@ -1,5 +1,9 @@
 # Documentation
 
+## API
+
+[Open API Link](https://editor.swagger.io/?url=https://raw.githubusercontent.com/ahoy-app/documentation/master/openapi.yaml)
+
 ## Views
 
 ## Flow
