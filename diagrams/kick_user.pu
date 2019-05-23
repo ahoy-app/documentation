@@ -1,0 +1,28 @@
+@startuml
+skinparam componentStyle uml2
+
+participant "Client 1" as c1
+participant "Client 2" as c2
+
+participant "API Server" as as
+participant "WS Server" as ws
+
+participant "Mongo" as mdb
+
+participant "Rabbit MQ" as rbb
+
+
+c1 --> as : DELETE /rooms/{roomId}/members user:userId
+as --> mdb : findRoom(roomId)
+as <-- mdb : room
+as --> as : Check user is on the room,\nadmin permissions, etc.
+as --> as : room.removeMember(userId)
+as --> as : room.save()
+as --> rbb : { key: room.{roomId}.kicked , body: { userId } }
+
+rbb --> ws : { key: room.{roomId}.kicked , body: { userId } }
+
+ws --> c1 : { key: room.{roomId}.kicked , body: { userId } }
+ws --> c2 : { key: room.{roomId}.kicked , body: { userId } }
+
+@enduml

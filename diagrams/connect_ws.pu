@@ -1,0 +1,29 @@
+@startuml
+skinparam componentStyle uml2
+
+participant "Client 1" as c1
+
+participant "WS Server" as ws
+
+participant "Mongo" as mdb
+
+participant "Rabbit MQ" as rbb
+
+
+c1 --> ws : CONNECT /ws?access_token=XXXXX
+ws --> ws : Decode JWT Token -> user
+
+ws --> mdb : findUser(user.id)
+ws <-- mdb : user
+ws --> mdb : user.findRooms()
+ws <-- mdb : [rooms]
+
+ws --> rbb : createChannel()
+ws --> rbb : createQueue('', exclussive)
+ws --> rbb : bindQueue('', 'user.{user.id}.#')
+ws --> rbb : bindQueue('', 'room.ahoy.new_message')
+ws --> rbb : bindQueue('', 'room.{room[0].id}.#')
+ws --> rbb : bindQueue('', 'room.{room[1].id}.#')
+
+c1 <-- ws : ack
+@enduml

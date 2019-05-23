@@ -24,21 +24,30 @@
 ![Flow Diagram](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/ahoy-app/documentation/master/diagrams/packages.pu)
 
 **.Packages Layered**
-![Flow Diagram](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/ahoy-app/documentation/master/diagrams/packages_layered.pu)
+![Packages Layered](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/ahoy-app/documentation/master/diagrams/packages_layered.pu)
 
 **.Packages Layered HTTP**
 
-![Flow Diagram](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/ahoy-app/documentation/master/diagrams/packages_http.pu)
+![Packages Layered HTTP](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/ahoy-app/documentation/master/diagrams/packages_http.pu)
 
 **.Packages Layered WS**
-![Flow Diagram](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/ahoy-app/documentation/master/diagrams/packages_ws.pu)
+![Packages Layered WS](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/ahoy-app/documentation/master/diagrams/packages_ws.pu)
 
 ### Deploy
 
 **.Deploy**
-![Flow Diagram](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/ahoy-app/documentation/master/diagrams/distribution.pu)
+![Deploy Diagram](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/ahoy-app/documentation/master/diagrams/distribution.pu)
 
 ## Flow
 
 **.Sign Up**
 ![Flow Diagram](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/ahoy-app/documentation/master/diagrams/sign_up.pu)
+
+**.Connect WS**
+![Flow Diagram](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/ahoy-app/documentation/master/diagrams/connect_ws.pu)
+
+**.Send Message**
+![Flow Diagram](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/ahoy-app/documentation/master/diagrams/send_msg.pu)
+
+**.Kick User**
+![Flow Diagram](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/ahoy-app/documentation/master/diagrams/kick_user.pu)

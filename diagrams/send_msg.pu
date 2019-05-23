@@ -1,0 +1,30 @@
+@startuml
+skinparam componentStyle uml2
+
+participant "Client 1" as c1
+participant "Client 2" as c2
+
+participant "API Server" as as
+participant "WS Server" as ws
+
+participant "Rabbit MQ" as rbb
+
+participant "Mongo" as mdb
+
+c1 --> as : POST /room/{roomId}/messages
+as --> mdb : findRoom(roomId)
+as <-- mdb : Room Info
+as --> as : Checks room exists, user is\nin the room, etc.
+
+as --> as : Creates the message
+as --> mdb : message.save()
+as <-- mdb : ack
+
+as --> rbb : { key: room.{roomId}.new_message , body: {message} }
+
+rbb --> ws : { key: room.{roomId}.new_message , body: {message} }
+
+ws --> c1 : { key: room.{roomId}.new_message , body: {message} }
+ws --> c2 : { key: room.{roomId}.new_message , body: {message} }
+
+@enduml
