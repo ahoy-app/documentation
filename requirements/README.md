@@ -50,8 +50,8 @@
 ## Admin
 
 - [x] Broadcast messages to all _Users_
-- [ ] Censorship
-- [ ] Topics
+- [x] Censorship
+- [x] Topics
 
 # Extra requirements
 

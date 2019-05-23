@@ -1,0 +1,31 @@
+@startuml
+!define FUNCTION (F,#FFAAAA) Function
+!pragma horizontalLineBetweenDifferentPackageAllowed
+skinparam linetype ortho
+
+package "src" {
+
+  package "insfrastructure" as infra_layer {
+
+    !includesub packages.pu!INFRASTRUCTURE
+
+  }
+
+  package "model" as model_layer {
+
+    !includesub packages.pu!MODEL
+
+  }
+
+  package "application" as app_layer {
+
+    !includesub packages.pu!APPLICATION
+    !includesub packages.pu!WS
+
+  }
+
+  app_layer -[hidden]down- model_layer
+  model_layer -[hidden]down- infra_layer
+
+}
+@enduml

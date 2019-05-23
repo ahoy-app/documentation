@@ -1,0 +1,108 @@
+@startuml
+skinparam componentStyle uml2
+!pragma horizontalLineBetweenDifferentPackageAllowed
+
+frame "Client APP" {
+
+  component "React APP" as app
+
+  component "React Framework\n+ Redux" as react
+  interface "React API" as rapi
+  react -up- rapi
+  rapi <.up. app
+
+  component "DOM" as dom
+  interface "DOM API" as dapi
+  dom -up- dapi
+  dapi <.up. react
+
+  component "Browser" as br
+  interface "Browser API" as brapi
+  br -up- brapi
+  brapi <.up. app
+
+}
+
+
+interface "HTTP\nAPI" as httpapi
+br .down.> httpapi
+
+frame "API Server" {
+
+  component "Express Router" as router
+  router -up- httpapi
+
+  component "Auth Middleware" as httpmddl
+  interface "Middleware API" as httpmddlapi
+  httpmddl -up- httpmddlapi
+  httpmddlapi <.up. router
+
+  component "XXX Controller" as contr
+  interface "XXX Controller API" as capi
+  contr -up- capi
+  capi <.up. router
+
+  component "Mongoose YYY  Model\nComponent" as mongooose
+  interface "YYY Model API" as mongooseapi
+  mongooose -up- mongooseapi
+  mongooseapi <.up. contr
+
+  component "Event Dispatch\nSystem" as evpub
+  interface "Event Pub API" as evpubapi
+  evpub -up- evpubapi
+  evpubapi <.up. contr
+
+  contr -[hidden]right- httpmddl
+
+}
+
+interface "WS\nAPI" as wsapi
+br .down.> wsapi
+
+frame "Event Server" {
+
+  component "WS Server" as ws
+  ws -up- wsapi
+
+  component "Auth Middleware" as wsmddl
+  interface "Middleware API" as wsmddlapi
+  wsmddl -up- wsmddlapi
+  wsmddlapi <.left. ws
+
+  component "Event Listen\nSystem" as evsub
+  interface "Event Sub API" as evsubapi
+  evsub -up- evsubapi
+  evsubapi <.up. ws
+
+  component "Mongoose User Model\nComponent" as mongooseuser
+  interface "User API" as muserapi
+  mongooseuser -up- muserapi
+  muserapi <.up. ws
+
+}
+
+interface "AMQP\nAPI" as evapi
+evpub .down.> evapi
+evsub .down.> evapi
+
+frame "Rabbit" {
+
+  component "Event Queues" as evstore
+  evstore -up- evapi
+
+}
+
+interface "MongoDB\nAPI" as mongoapi
+mongooose .down.> mongoapi
+mongooseuser .down.> mongoapi
+
+frame "Mongo DB" {
+
+  component "Model Persistance" as model
+  model -up- mongoapi
+
+}
+
+evsub -[hidden]l- mongooseuser
+
+@enduml

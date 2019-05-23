@@ -1,0 +1,69 @@
+@startuml
+skinparam componentStyle uml2
+!pragma horizontalLineBetweenDifferentPackageAllowed
+skinparam linetype polyline 
+
+node "Client" as client {
+ artifact "ahoy-app"
+ artifact "ahoy-trends"
+}
+
+cloud "Heroku"as h {
+  node "ahoy-app" as app {
+    artifact "React Server" as rs
+  }
+
+  node "ahoy-api" as api {
+    artifact "MonoServer" as ms
+    artifact "API Server" as apis
+    artifact "WS Server" as wss
+
+    ms --> apis
+    ms --> wss
+  }
+
+  node "ahoy-trends" as trends {
+      artifact "Trending Server" as ts
+  }
+}
+
+cloud "CloudAMQP" as r {
+  node "VM1" as rabbit{
+    artifact "RabbitMQ" as rmq
+  }
+}
+
+cloud "Mongo Atlas" as m {
+  node "VM{1,2,3}" as mongo {
+    artifact "MongoDB" as mdb
+    database "Rooms" as mdbr
+    database "Messages" as mdbm
+    database "Users" as mdbu
+    database "DangerWords" as mdbw
+    mdb --> mdbr
+    mdb --> mdbm
+    mdb --> mdbu
+    mdb --> mdbw
+  }
+}
+
+
+client -down-> trends
+client -down-> api
+client -down-> app
+
+trends -down-> rabbit
+
+api -down-> mongo
+api -down-> rabbit
+
+
+rs -[hidden]up- client
+ms -[hidden]up- client
+ts -[hidden]up- client
+rmq -[hidden]up- wss
+rmq -[hidden]up- apis
+mdb -[hidden]up- wss
+mdb -[hidden]up- apis
+
+@enduml

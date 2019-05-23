@@ -1,0 +1,43 @@
+@startumlApi
+skinparam componentStyle uml2
+
+participant "Client" as c
+
+participant "Web Server" as ws
+
+participant "API Server" as as
+
+participant "GitHub Server" as gs
+
+participant "Mongo" as mdb
+
+c --> as : GET /
+c <-- as : 200 Ahoy App HTML Page
+
+c --> c : Ahoy app knows it has to login
+
+c --> gs : GET {GITHUB}/oauth/login
+c <-- gs : 200 LogIn OR Grant Access GitHub HTML Page
+c --> gs : POST LogIn Credentials + Grant Access
+c <-- gs : 302 {WEB_SERVER}/callback?code=XXXX
+
+c --> as : GET /callback?code=XXXX
+c <-- as : 200 Ahoy App HTML Page
+
+c --> c : Ahoy app knows it has to send code to API Server
+
+c --> ws : GET /oauth/redirect?code=XXX
+ws --> gs : GET /login/oauth/access_token?code=XXX
+ws <-- gs : 200 access_token: YYYY
+ws --> gs : GET /user/emails?access_token=YYYY
+ws <-- gs : 200 userEmail: [...]
+
+ws --> mdb : findById(userEmail[0])
+ws <-- mdb : notFound()
+ws --> mdb : insert(new User(id:userEmail[0]))
+
+ws --> ws : Sign a new ahoy-scoped access_token
+
+c <-- ws : 200 access_token: ZZZ
+
+@enduml

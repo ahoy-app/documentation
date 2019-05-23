@@ -1,0 +1,57 @@
+@startuml
+skinparam componentStyle uml2
+!pragma horizontalLineBetweenDifferentPackageAllowed
+
+frame "Client APP" {
+
+  component "Browser" as br
+
+}
+
+
+interface "HTTP\nAPI" as httpapi
+br .down.> httpapi
+
+frame "API Server" {
+
+  component "Express Router" as router
+  router -up- httpapi
+
+  component "Auth Middleware" as httpmddl
+  interface "Middleware API" as httpmddlapi
+  httpmddl -up- httpmddlapi
+  httpmddlapi <.up. router
+
+  component "Trendings Controller" as contr
+  interface "Trendings Controller API" as capi
+  contr -up- capi
+  capi <.up. router
+
+
+  component "Event Listen\nSystem" as evsub
+  interface "Event Sub API" as evsubapi
+  evsub -up- evsubapi
+  evsubapi <.up. ws
+
+  component "Trendings Store" as trending
+  interface "Read API" as trendapir
+  interface "Write API" as trendapiw
+  trending -up- trendapir
+  trending -up- trendapiw
+  trendapir <.up. contr
+  trendapiw <.up. evsub
+
+}
+
+
+interface "AMQP\nAPI" as evapi
+evsub .down.> evapi
+
+frame "Rabbit" {
+
+  component "Event Queues" as evstore
+  evstore -up- evapi
+
+}
+
+@enduml

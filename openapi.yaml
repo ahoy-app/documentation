@@ -4,20 +4,20 @@ info:
   description: This is the Ahoy Backend basic API
   version: 1.0.0
 servers:
-- url: https://ahoy-api.herokuapp.com/
-- url: wss://ahoy-api.herokuapp.com/
+  - url: https://ahoy-api.herokuapp.com/
+  - url: wss://ahoy-api.herokuapp.com/
 tags:
-- name: Room
-  description: Rooms ops
-- name: User
-  description: User Ops
-- name: Messages
-  description: Message ops
+  - name: Room
+    description: Rooms ops
+  - name: User
+    description: User Ops
+  - name: Messages
+    description: Message ops
 paths:
   /rooms:
     get:
       tags:
-      - Room
+        - Room
       operationId: getAllRooms
       responses:
         200:
@@ -31,18 +31,21 @@ paths:
                   title: Room Basic Item
                   type: object
                   additionalProperties:
-                    $ref: '#/components/schemas/RoomBasicItem'
+                    $ref: "#/components/schemas/RoomBasicItem"
       security:
-      - access_token: []
+        - access_token: []
     post:
       tags:
-      - Room
+        - Room
       operationId: newGroupRoom
       requestBody:
         content:
           application/json:
             schema:
-              type: string
+              type: object
+              properties:
+                title: # <!--- field name
+                  type: string
         required: true
       responses:
         200:
@@ -50,79 +53,91 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RoomFullItem'
+                $ref: "#/components/schemas/RoomFullItem"
       security:
-      - access_token: []
-  /room/duo:
+        - access_token: []
+  /rooms/duo:
     post:
       tags:
-      - Room
+        - Room
       operationId: newDuoRoom
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              type: string
-        required: true
+              type: object
+              properties:
+                user: # <!--- field name
+                  type: string
       responses:
         200:
           description: A single room
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RoomFullItem'
+                $ref: "#/components/schemas/RoomFullItem"
       security:
-      - access_token: []
+        - access_token: []
   /room/{roomId}:
     get:
       tags:
-      - Room
+        - Room
       operationId: getRoom
       parameters:
-      - name: roomId
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: A single room
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RoomFullItem'
+                $ref: "#/components/schemas/RoomFullItem"
       security:
-      - access_token: []
+        - access_token: []
     delete:
       tags:
-      - Room
+        - Room
       operationId: deleteRoom
       parameters:
-      - name: roomId
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
-          description: 'Result '
+          description: "Result "
           content:
             application/json:
               schema:
                 type: string
       security:
-      - access_token: []
+        - access_token: []
   /room/{roomId}/members:
     put:
       tags:
-      - Room
+        - Room
       operationId: inviteUser
       parameters:
-      - name: roomId
-        in: path
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
         required: true
-        schema:
-          type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user: # <!--- field name
+                  type: string
       responses:
         200:
           description: Result
@@ -131,17 +146,26 @@ paths:
               schema:
                 type: string
       security:
-      - access_token: []
+        - access_token: []
     delete:
       tags:
-      - Room
+        - Room
       operationId: kickoutUser
       parameters:
-      - name: roomId
-        in: path
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
         required: true
-        schema:
-          type: string
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user: # <!--- field name
+                  type: string
       responses:
         200:
           description: Result
@@ -150,18 +174,18 @@ paths:
               schema:
                 type: string
       security:
-      - access_token: []
+        - access_token: []
   /room/{roomId}/messages:
     get:
       tags:
-      - Messages
+        - Messages
       operationId: getMessages
       parameters:
-      - name: roomId
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Message Full List
@@ -170,24 +194,34 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MessageFullItem'
+                  $ref: "#/components/schemas/MessageFullItem"
       security:
-      - access_token: []
+        - access_token: []
     post:
       tags:
-      - Messages
+        - Messages
       operationId: postMessage
       parameters:
-      - name: roomId
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
             schema:
-              type: string
+              type: object
+              properties:
+                content: # <!--- field name
+                  type: string
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  format: binary
         required: true
       responses:
         200:
@@ -195,24 +229,24 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageBasicItem'
+                $ref: "#/components/schemas/MessageBasicItem"
       security:
-      - access_token: []
+        - access_token: []
   /room/{roomId}/file/{fileId}:
     get:
       tags:
-      - Messages
+        - Messages
       parameters:
-      - name: roomId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: fileId
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fileId
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: Original File
@@ -221,36 +255,36 @@ paths:
               schema:
                 type: boolean
       security:
-      - access_token: []
+        - access_token: []
   /user:
     get:
       tags:
-      - User
+        - User
       responses:
         302:
           description: Redirect to own user
           content: {}
       security:
-      - access_token: []
+        - access_token: []
   /user/{userId}:
     get:
       tags:
-      - User
+        - User
       parameters:
-      - name: userId
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: User
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserBasicItem'
+                $ref: "#/components/schemas/UserBasicItem"
       security:
-      - access_token: []
+        - access_token: []
 components:
   schemas:
     MessageFullItem:
@@ -268,9 +302,9 @@ components:
         type:
           type: string
           enum:
-          - group
-          - duo
-          - system
+            - group
+            - duo
+            - system
         timestamp:
           type: string
     RoomBasicItem:
@@ -322,13 +356,13 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/UserBasicItem'
+            $ref: "#/components/schemas/UserBasicItem"
     MessageBasic:
       description: Message Basic
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/MessageBasicItem'
+            $ref: "#/components/schemas/MessageBasicItem"
     RoomList:
       description: A basic room list
       content:
@@ -340,7 +374,7 @@ components:
               title: Room Basic Item
               type: object
               additionalProperties:
-                $ref: '#/components/schemas/RoomBasicItem'
+                $ref: "#/components/schemas/RoomBasicItem"
     File:
       description: Original File
       content:
@@ -354,13 +388,13 @@ components:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/MessageFullItem'
+              $ref: "#/components/schemas/MessageFullItem"
     Room:
       description: A single room
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/RoomFullItem'
+            $ref: "#/components/schemas/RoomFullItem"
   parameters:
     roomId:
       name: roomId

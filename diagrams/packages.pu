@@ -1,0 +1,138 @@
+@startuml
+!define FUNCTION (F,#FFAAAA) Function
+!pragma horizontalLineBetweenDifferentPackageAllowed
+skinparam linetype ortho
+
+package "src" {
+
+  !startsub INFRASTRUCTURE
+
+  package "amqplib" {
+    class "amqp" as amqplib_amqp
+  }
+
+  package "mongoose" {
+    class "mongoose" as mongoose_mongoose
+  }
+
+  package "express" {
+    class "express" as express_express
+  }
+
+  !endsub /'INFRASTRUCTURE'/
+
+
+
+  !startsub MODEL
+
+  package "auth" {
+    class "verifyClient" as auth_verifyClient << FUNCTION >>
+    class "jwt" as auth_jwt
+    class "github" as auth_github
+
+    auth_verifyClient --> auth_jwt
+  }
+
+  package "model" as model_package {
+    class "Attachment" as model_Attachment
+    class "Message" as model_Message
+    class "Room" as model_Room
+    class "User" as model_User
+
+  }
+
+  model_package --> mongoose_mongoose
+
+  package "events" {
+    class "auth" as events_auth
+    class "message" as events_message
+    class "room" as events_room
+  }
+
+  !endsub /'MODEL'/
+
+
+  !startsub APPLICATION
+
+  package "utils" {
+    class "middleware" as utils_middleware
+    class "promiseRetry" as utils_promiseRetry
+  }
+
+  package "config" {
+    class "amqp" as config_amqp
+    class "gridfs" as config_gridfs
+    class "mdb" as config_mdb
+
+    config_amqp --> utils_promiseRetry
+    config_mdb --> utils_promiseRetry
+
+    config_amqp --> amqplib_amqp
+    config_mdb --> mongoose_mongoose
+    config_gridfs --> mongoose_mongoose
+  }
+
+  !startsub HTTP
+  package "http" {
+    package "controllers" {
+      class "auth" as http_controllers_auth
+      class "message" as http_controllers_message
+      class "room" as http_controllers_room
+      class "users" as http_controllers_users
+    }
+
+    controllers --> events
+    controllers --> model_package
+
+    package "middlewares" {
+      class "censorship" as http_middlewares_censorship
+      class "censoreMessages" as http_middlewares_censoreMessages
+      class "fileUpload" as http_middlewares_fileUpload
+      class "verifyHTTPRequest" as http_middlewares_verifyHTTPRequest
+      http_middlewares_verifyHTTPRequest --> auth_verifyClient
+
+    }
+
+    class "app" as http_app
+    class "routes" as http_routes
+
+    http_routes --> controllers
+    http_routes --> middlewares
+    http_app --> http_routes
+  }
+  !endsub /'HTTP'/
+
+  !startsub WS
+  package "ws" {
+    class "app" as ws_app
+    class "verify" as ws_verify << FUNCTION >>
+    class "onConnection" as ws_onConnection << FUNCTION >>
+    class "amqp" as ws_amqp
+    class "ws" as ws_ws
+
+    ws_app --> ws_verify
+    ws_app --> ws_onConnection
+
+    ws_verify --> auth_verifyClient
+
+    ws_onConnection --> ws_amqp
+    ws_onConnection --> ws_ws
+    ws_onConnection --> utils_middleware
+    ws_onConnection --> model_package
+
+    ws_amqp --> amqplib_amqp
+  }
+  !endsub /'WS'/
+
+  class "monoserver" as monoserver
+
+  monoserver --> express_express
+  monoserver --> ws_app
+  monoserver --> http_app
+  monoserver --> config
+
+  !endsub /'APPLICATION'/
+
+}
+
+@enduml
