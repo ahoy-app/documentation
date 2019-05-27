@@ -1,0 +1,86 @@
+@startuml
+!define FUNCTION (F,#FFAAAA) Function
+!pragma horizontalLineBetweenDifferentPackageAllowed
+skinparam linetype ortho
+
+package "src" {
+
+  !startsub INFRASTRUCTURE
+
+  package "amqplib" {}
+
+  package "mongoose" {}
+
+  package "express" {}
+
+  !endsub /'INFRASTRUCTURE'/
+
+
+
+  !startsub MODEL
+
+  package "auth" {}
+
+  package "model" {}
+
+  model --> mongoose
+
+  package "events" {}
+
+  !endsub /'MODEL'/
+
+
+  !startsub APPLICATION
+
+
+  package "config" {}
+
+  config --> amqplib
+  config --> mongoose
+
+  !startsub HTTP
+  package "http" {
+    package "controllers" {}
+    controllers --> events
+    controllers --> model
+
+    package "middlewares" {}
+    middlewares --> auth
+
+    class "app" as http_app
+    class "routes" as http_routes
+
+    http_routes --> controllers
+    http_routes --> middlewares
+    http_app --> http_routes
+  }
+  !endsub /'HTTP'/
+
+  !startsub WS
+  package "ws" {
+    class "app" as ws_app
+    class "verify" as ws_verify << FUNCTION >>
+    class "onConnection" as ws_onConnection << FUNCTION >>
+
+    ws_app --> ws_verify
+    ws_app --> ws_onConnection
+
+    ws_verify --> auth
+
+    ws_onConnection --> model
+    ws_onConnection --> amqplib
+  }
+  !endsub /'WS'/
+
+  class "monoserver" as monoserver
+
+  monoserver --> express
+  monoserver --> ws_app
+  monoserver --> http_app
+  monoserver --> config
+
+  !endsub /'APPLICATION'/
+
+}
+
+@enduml

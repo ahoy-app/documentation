@@ -1,0 +1,32 @@
+@startuml
+!define FUNCTION (F,#FFAAAA) Function
+!pragma horizontalLineBetweenDifferentPackageAllowed
+skinparam linetype polyline
+
+package "src" {
+
+  package "insfrastructure" as infra_layer {
+
+    !includesub packages_minimal.pu!INFRASTRUCTURE
+
+  }
+
+  package "model" as model_layer {
+
+    !includesub packages_minimal.pu!MODEL
+
+  }
+
+  package "application" as app_layer {
+
+    !includesub packages_minimal.pu!APPLICATION
+    !includesub packages_minimal.pu!HTTP
+    !includesub packages_minimal.pu!WS
+
+  }
+
+  app_layer -[hidden]down- model_layer
+  model_layer -[hidden]down- infra_layer
+
+}
+@enduml
