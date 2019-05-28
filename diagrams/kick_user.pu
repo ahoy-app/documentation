@@ -22,6 +22,8 @@ as --> rbb : { key: room.{roomId}.kicked , body: { userId } }
 
 rbb --> ws : { key: room.{roomId}.kicked , body: { userId } }
 
+ws --> rbb : bindQueue('', 'room.{newRoom].id}.#')
+
 ws --> c1 : { key: room.{roomId}.kicked , body: { userId } }
 ws --> c2 : { key: room.{roomId}.kicked , body: { userId } }
 

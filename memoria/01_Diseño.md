@@ -77,10 +77,12 @@ La conexión con el Web Socket se hace en dos pasos definidos por el protocolo: 
 
 #### Send Message
 
-Este flujo concreto, no sólo representa la interacción más habitual en el sistema, sino que también representa al resto de peticiones HTTP de escritura del sistema. Se suelen componer estas de tres fases: lectura de la base de datos y verificación de permisos; escritura del resultado del cambio en la base de datos; y finalmente propagación de un evento que notifique el cambio.
+Este escenario concreto, no sólo representa la interacción más habitual en el sistema, sino que también representa al resto de peticiones HTTP de escritura del sistema. Se suelen componer estas de tres fases: lectura de la base de datos y verificación de permisos; escritura del resultado del cambio en la base de datos; y finalmente propagación de un evento que notifique el cambio.
 
 ![Send Message](../images/send_msg.png)
 
 #### Kick User
+
+Este último escenario extiende las fases del escenario anterior con un paso extra. Al añadir o echar a un usuario de una habitación, cada cola (vinculada a una sesión Web Socket activa) debe añadir o quitar un binding al tópico de esa habitación. De ese modo, conexiones existentes pueden escuchar en habitaciones que no podían escuchar en su inicio.
 
 ![Kick User](../images/kick_user.png)
