@@ -1,8 +1,13 @@
-# Ahoy App
+---
+title: Ahoy App
+author: Sergio Martín Segura
+documentclass: scrartcl
+toc: true
+toc-title: true
+toc-depth: 2
+---
 
-Por Sergio Martín Segura
-
-## Introducción y Objetivos
+# Introducción y Objetivos
 
 El objetivo de este proyecto es diseñar e implementar un sistema distribuido, concretamente, una plataforma de chat en tiempo real.
 

@@ -29,9 +29,6 @@ frame "API Server" {
 
 
   component "Event Listen\nSystem" as evsub
-  interface "Event Sub API" as evsubapi
-  evsub -up- evsubapi
-  evsubapi <.up. ws
 
   component "Trendings Store" as trending
   interface "Read API" as trendapir
